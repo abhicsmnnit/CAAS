@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Created by abhinav.v on 02/12/16.
  */
-public class ObjectToJsonString
+public class JsonString
 {
     private static ObjectMapper objectMapper;
 

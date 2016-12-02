@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controller.helper.AffiliateRequest;
 import model.Affiliate;
-import util.ObjectToJsonString;
+import util.JsonString;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -38,11 +38,11 @@ public class Affiliates extends HttpServlet
         {
             if (SHOW_REPORT.equals(request.get().getAction()))
             {
-                out.print(ObjectToJsonString.of(Affiliate.get(request.get().getId()).getReport()));
+                out.print(JsonString.of(Affiliate.get(request.get().getId()).getReport()));
             }
             else if (NO_ACTION.equals(request.get().getAction()))
             {
-                out.print(ObjectToJsonString.of(getAffiliates()));
+                out.print(JsonString.of(getAffiliates()));
             }
             return;
         }

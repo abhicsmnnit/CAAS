@@ -1,9 +1,7 @@
 package controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import model.Token;
+import util.JsonString;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -35,10 +33,7 @@ public class Providers extends HttpServlet
         }
         else
         {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-            out.print(objectMapper.writeValueAsString(new Token(username + "~" + password)));
+            out.print(JsonString.of(new Token(username + "~" + password)));
         }
     }
 

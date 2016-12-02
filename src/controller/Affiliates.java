@@ -44,6 +44,7 @@ public class Affiliates extends HttpServlet
             {
                 out.print(ObjectToJsonString.of(getAffiliates()));
             }
+            return;
         }
 
         out.print("Invalid URL");

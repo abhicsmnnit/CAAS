@@ -13,15 +13,26 @@ import java.io.IOException;
 public class BestMatch extends HttpServlet
 {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        doOptions(req, resp);
+
         final String meta = req.getParameter("meta");
         final ServletOutputStream out = resp.getOutputStream();
         out.print(getBestMatchTag());
     }
 
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    {
+        resp.addHeader("Access-Control-Request-Method", "*");
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+        resp.addHeader("Access-Control-Allow-Headers",
+                       "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With, X-Aff-Id");
+    }
+
     private String getBestMatchTag()
     {
-        return "<a href=\"https://www.google.com\"><img src=\"images/yes-no.jpg\" height=\"100px\"></a>";
+        return "<a href=\"https://www.google.com\"><img src=\"http://172.16.180.152:8080/images/yes-no.jpg\" height=\"100px\"></a>";
     }
 }

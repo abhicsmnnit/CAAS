@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class Affiliate
 {
-    private String id;
+    private int id;
     private String email;
     private String website;
 
-    public Affiliate(String id, String email, String website)
+    public Affiliate(int id, String email, String website)
     {
         this.id = id;
         this.email = email;
@@ -23,7 +23,7 @@ public class Affiliate
 
     public static Affiliate get(int affiliateId)
     {
-        return new Affiliate(String.valueOf(1), "", "");
+        return new Affiliate(1, "", "");
     }
 
     @JsonIgnore

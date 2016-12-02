@@ -53,9 +53,9 @@ public class Affiliates extends HttpServlet
     private List<Affiliate> getAffiliates()
     {
         List<Affiliate> affiliates = new ArrayList<>();
-        affiliates.add(new Affiliate("1", "sundar.pichai@google.com", "google.com"));
-        affiliates.add(new Affiliate("2", "mark.zuck@facebook.com", "facebook.com"));
-        affiliates.add(new Affiliate("3", "elon.musk@spacex.com", "spacex.com"));
+        affiliates.add(new Affiliate(1, "sundar.pichai@google.com", "google.com"));
+        affiliates.add(new Affiliate(2, "mark.zuck@facebook.com", "facebook.com"));
+        affiliates.add(new Affiliate(3, "elon.musk@spacex.com", "spacex.com"));
         return affiliates;
     }
 
@@ -78,7 +78,7 @@ public class Affiliates extends HttpServlet
             final ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-            out.print(objectMapper.writeValueAsString(new Affiliate("totally-random-id", email, website)));
+            out.print(objectMapper.writeValueAsString(new Affiliate(9876, email, website)));
         }
     }
 }

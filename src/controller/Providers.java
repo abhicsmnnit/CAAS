@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 /**
  * Created by abhinav.v on 02/12/16.
  */
-public class Users extends HttpServlet
+public class Providers extends HttpServlet
 {
-    private static final Logger log = Logger.getLogger(Users.class.getName());
+    private static final Logger log = Logger.getLogger(Providers.class.getName());
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {

@@ -20,4 +20,13 @@
         <servlet-name>Affiliates</servlet-name>
         <url-pattern>/affiliates/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BestMatch</servlet-name>
+        <servlet-class>controller.BestMatch</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BestMatch</servlet-name>
+        <url-pattern>/best-match</url-pattern>
+    </servlet-mapping>
 </web-app>

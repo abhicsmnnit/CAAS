@@ -38,7 +38,7 @@ public class Affiliate
         try (Statement statement = Database.getReportingDbConnection().createStatement())
         {
             final ResultSet resultSet = statement.executeQuery(
-                    "SELECT added, productType, customerCost FROM ss2logs WHERE affAid = " + id);
+                    "SELECT added, productType, customerCost / 2 FROM ss2logs WHERE affAid = " + id);
             while (resultSet.next())
             {
                 report.add(new ReportEntry(resultSet.getString("added"),

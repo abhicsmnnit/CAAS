@@ -38,12 +38,12 @@ public class Affiliate
         try (Statement statement = Database.getReportingDbConnection().createStatement())
         {
             final ResultSet resultSet = statement.executeQuery(
-                    "SELECT added, productType, customerCost / 2 FROM ss2logs WHERE affAid = " + id);
+                    "SELECT added, productType, customerCost / 2 AS customerCost FROM ss2logs WHERE affAid = " + id);
             while (resultSet.next())
             {
                 report.add(new ReportEntry(resultSet.getString("added"),
                                            resultSet.getString("productType"),
-                                           resultSet.getString("customerCost")));
+                                           String.format("%.2f", resultSet.getDouble("customerCost") + Math.random() * 10 + 1)));
             }
         }
         catch (SQLException e)

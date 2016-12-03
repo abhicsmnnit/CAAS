@@ -1,8 +1,5 @@
 package controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import controller.helper.AffiliateRequest;
 import model.Affiliate;
 import model.Provider;
@@ -15,11 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -66,23 +62,45 @@ public class Affiliates extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        final Optional<Provider> provider = Provider.get(req.getHeader("X-Auth-Token"));
+        if (!provider.isPresent())
+        {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         ServletOutputStream out = resp.getOutputStream();
 
-        log.info(req.getPathInfo());
+        final String username = req.getParameter("email");
+        final String name = req.getParameter("name");
 
-        final String email = req.getParameter("email");
-        final String website = req.getParameter("website");
-
-        if (email == null || website == null)
+        if (username == null || name == null)
         {
-            out.print("Invalid input");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         else
         {
-            final ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+            try (PreparedStatement pst = Database.getConnection().prepareStatement(
+                    "INSERT INTO affiliate (username, name, provider_id) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS))
+            {
+                pst.setString(1, username);
+                pst.setString(2, name);
+                pst.setInt(3, provider.get().getId());
 
-//            out.print(objectMapper.writeValueAsString(new Affiliate(9876, email, website)));
+                pst.executeUpdate();
+
+                final ResultSet generatedKeys = pst.getGeneratedKeys();
+
+                if (generatedKeys.next())
+                {
+                    out.print(JsonString.of(Affiliate.get(generatedKeys.getInt(1)).get()));
+                }
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 }

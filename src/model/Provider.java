@@ -5,6 +5,8 @@ import util.Database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,17 +35,20 @@ public class Provider
 
     public static Optional<Provider> get(String token)
     {
-        try (Statement statement = Database.getConnection().createStatement())
+        if (token != null)
         {
-            final ResultSet resultSet = statement.executeQuery("SELECT id, website FROM provider WHERE token = " + token);
-            if (resultSet.next())
+            try (Statement statement = Database.getConnection().createStatement())
             {
-                return Optional.of(new Provider(resultSet.getInt("id"), resultSet.getString("website")));
+                final ResultSet resultSet = statement.executeQuery("SELECT id, website FROM provider WHERE token = " + token);
+                if (resultSet.next())
+                {
+                    return Optional.of(new Provider(resultSet.getInt("id"), resultSet.getString("website")));
+                }
             }
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
         }
 
         return Optional.empty();
@@ -65,5 +70,26 @@ public class Provider
         }
 
         return Optional.empty();
+    }
+
+    public List<Affiliate> getAffiliates()
+    {
+        List<Affiliate> affiliates = new ArrayList<>();
+        try (Statement statement = Database.getConnection().createStatement())
+        {
+            final ResultSet resultSet = statement.executeQuery("SELECT id, username, name FROM affiliate WHERE id = " + id);
+            while (resultSet.next())
+            {
+                affiliates.add(new Affiliate(resultSet.getInt("id"),
+                                             resultSet.getString("username"),
+                                             resultSet.getString("name"),
+                                             id));
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return affiliates;
     }
 }

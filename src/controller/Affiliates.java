@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controller.helper.AffiliateRequest;
 import model.Affiliate;
+import model.Provider;
+import util.Database;
 import util.JsonString;
 
 import javax.servlet.ServletException;
@@ -13,6 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,32 +36,31 @@ public class Affiliates extends HttpServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
-        final ServletOutputStream out = resp.getOutputStream();
-        final Optional<AffiliateRequest> request = AffiliateRequest.of(req.getPathInfo());
-
-        if (request.isPresent())
+        final Optional<Provider> provider = Provider.get(req.getHeader("X-Auth-Token"));
+        if (!provider.isPresent())
         {
-            if (SHOW_REPORT.equals(request.get().getAction()))
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        final ServletOutputStream out = resp.getOutputStream();
+        final Optional<AffiliateRequest> affiliateRequest = AffiliateRequest.of(req.getPathInfo());
+
+        if (affiliateRequest.isPresent())
+        {
+            final AffiliateRequest request = affiliateRequest.get();
+            if (SHOW_REPORT.equals(request.getAction()))
             {
-                out.print(JsonString.of(Affiliate.get(request.get().getId()).getReport()));
+                out.print(JsonString.of(Affiliate.get(request.getId()).get().getReport()));
             }
-            else if (NO_ACTION.equals(request.get().getAction()))
+            else if (NO_ACTION.equals(request.getAction()))
             {
-                out.print(JsonString.of(getAffiliates()));
+                out.print(JsonString.of(provider.get().getAffiliates()));
             }
             return;
         }
 
         out.print("Invalid URL");
-    }
-
-    private List<Affiliate> getAffiliates()
-    {
-        List<Affiliate> affiliates = new ArrayList<>();
-        affiliates.add(new Affiliate(1, "sundar.pichai@google.com", "google.com"));
-        affiliates.add(new Affiliate(2, "mark.zuck@facebook.com", "facebook.com"));
-        affiliates.add(new Affiliate(3, "elon.musk@spacex.com", "spacex.com"));
-        return affiliates;
     }
 
     @Override
@@ -78,7 +82,7 @@ public class Affiliates extends HttpServlet
             final ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-            out.print(objectMapper.writeValueAsString(new Affiliate(9876, email, website)));
+//            out.print(objectMapper.writeValueAsString(new Affiliate(9876, email, website)));
         }
     }
 }

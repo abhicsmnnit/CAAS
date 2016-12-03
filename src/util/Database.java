@@ -15,6 +15,7 @@ public class Database
 {
     private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
     private static Connection c = null;
+    private static Connection reportingDb = null;
 
     public static Connection getConnection()
     {
@@ -42,16 +43,16 @@ public class Database
 
     public static Connection getReportingDbConnection()
     {
-        if (c == null)
+        if (reportingDb == null)
         {
             synchronized (Database.class)
             {
-                if (c == null)
+                if (reportingDb == null)
                 {
                     try
                     {
                         Class.forName("com.mysql.jdbc.Driver");
-                        c = DriverManager.getConnection("jdbc:mysql://172.16.189.46:3306/ss2logs", "root", "");
+                        reportingDb = DriverManager.getConnection("jdbc:mysql://172.16.189.46:3306/ss2logs", "root", "");
                     }
                     catch (Exception e)
                     {
@@ -61,7 +62,7 @@ public class Database
                 }
             }
         }
-        return c;
+        return reportingDb;
     }
 
     public static void executeNonQuery(String sql) throws SQLException

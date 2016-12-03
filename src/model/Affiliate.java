@@ -34,12 +34,22 @@ public class Affiliate
     public List<ReportEntry> getReport()
     {
         List<ReportEntry> report = new ArrayList<>();
-        report.add(new ReportEntry("14-11-2016", "Dev Cloud", "$ 8000"));
-        report.add(new ReportEntry("14-11-2016", "G Suite", "$ 80000"));
-        report.add(new ReportEntry("13-11-2016", "Dev Cloud", "$ 6000"));
-        report.add(new ReportEntry("13-11-2016", "G Suite", "$ 70000"));
-        report.add(new ReportEntry("12-11-2016", "Dev Cloud", "$ 2150"));
-        report.add(new ReportEntry("12-11-2016", "G Suite", "$ 90000"));
+
+        try (Statement statement = Database.getReportingDbConnection().createStatement())
+        {
+            final ResultSet resultSet = statement.executeQuery(
+                    "SELECT added, productType, customerCost FROM ss2logs WHERE affAid = " + id);
+            while (resultSet.next())
+            {
+                report.add(new ReportEntry(resultSet.getString("added"),
+                                           resultSet.getString("productType"),
+                                           resultSet.getString("customerCost")));
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
         return report;
     }
 

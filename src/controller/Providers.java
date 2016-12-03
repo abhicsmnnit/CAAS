@@ -35,7 +35,7 @@ public class Providers extends HttpServlet
 
         if (username == null || password == null || website == null)
         {
-            out.print("Invalid input");
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
         else
         {

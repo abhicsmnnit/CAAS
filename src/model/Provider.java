@@ -39,7 +39,7 @@ public class Provider
         {
             try (Statement statement = Database.getConnection().createStatement())
             {
-                final ResultSet resultSet = statement.executeQuery("SELECT id, website FROM provider WHERE token = " + token);
+                final ResultSet resultSet = statement.executeQuery("SELECT id, website FROM provider WHERE token = '" + token + "'");
                 if (resultSet.next())
                 {
                     return Optional.of(new Provider(resultSet.getInt("id"), resultSet.getString("website")));

@@ -77,7 +77,7 @@ public class Provider
         List<Affiliate> affiliates = new ArrayList<>();
         try (Statement statement = Database.getConnection().createStatement())
         {
-            final ResultSet resultSet = statement.executeQuery("SELECT id, username, name FROM affiliate WHERE id = " + id);
+            final ResultSet resultSet = statement.executeQuery("SELECT id, username, name FROM affiliate WHERE provider_id = " + id);
             while (resultSet.next())
             {
                 affiliates.add(new Affiliate(resultSet.getInt("id"),

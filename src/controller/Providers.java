@@ -31,19 +31,21 @@ public class Providers extends HttpServlet
 
         final String username = req.getParameter("username");
         final String password = req.getParameter("password");
+        final String website = req.getParameter("website");
 
-        if (username == null || password == null)
+        if (username == null || password == null || website == null)
         {
             out.print("Invalid input");
         }
         else
         {
             try (PreparedStatement pst = Database.getConnection().prepareStatement(
-                    "INSERT INTO provider (username, password, token) VALUES (?, ?, UUID())",
+                    "INSERT INTO provider (username, password, website, token) VALUES (?, ?, ?, UUID())",
                     Statement.RETURN_GENERATED_KEYS))
             {
                 pst.setString(1, username);
                 pst.setString(2, password);
+                pst.setString(3, website);
 
                 pst.executeUpdate();
                 final ResultSet generatedKeys = pst.getGeneratedKeys();
@@ -54,21 +56,13 @@ public class Providers extends HttpServlet
                     providerId = generatedKeys.getInt(1);
                 }
 
-                final Statement statement = Database.getConnection().createStatement();
-                final boolean execute = statement.execute(
+                final ResultSet resultSet = Database.getConnection().createStatement().executeQuery(
                         "SELECT token FROM provider WHERE id = " + providerId);
 
-                String token = null;
-                if (execute)
+                if (resultSet.next())
                 {
-                    final ResultSet resultSet = statement.getResultSet();
-                    if (resultSet.next())
-                    {
-                        token = resultSet.getString("token");
-                    }
+                    out.print(JsonString.of(new Token(resultSet.getString("token"))));
                 }
-
-                out.print(JsonString.of(new Token(token)));
             }
             catch (SQLException e)
             {
